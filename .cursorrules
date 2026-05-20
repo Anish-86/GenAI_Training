@@ -1,0 +1,7 @@
+Project coding rules (always apply):
+
+- Use Tailwind CSS for styling. Never use inline CSS styles.
+- Use Vitest for testing. Do not use Jest.
+- TypeScript must run in strict mode only (`"strict": true`).
+- Every interactive UI element must include an `aria-label`.
+- Use FastAPI for the Python backend.

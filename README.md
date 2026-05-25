@@ -79,6 +79,22 @@ curl -N -X POST http://127.0.0.1:8000/api/chat/stream \
   -d '{"prompt":"Say hello","simulate":"mid_stream_error"}'
 ```
 
+## Dashboard lab (wireframe exercise)
+
+3-panel React dashboard: sidebar + filter bar + data table.
+
+```bash
+cd frontend && npm run dev
+```
+
+Open http://localhost:5173 — **Dashboard** is the default view (use the floating switcher for Streaming).
+
+Deliverables:
+
+- Component: `frontend/src/components/dashboard/DashboardPage.tsx`
+- Wireframe notes: `docs/WIREFRAME.md`
+- Accessibility checklist: `ACCESSIBILITY_CHECKLIST.md`
+
 ## Tests
 
 ```bash

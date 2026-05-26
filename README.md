@@ -18,7 +18,8 @@ python3 -m venv .venv
 source .venv/bin/activate
 pip install -r requirements.txt
 cp .env.example .env
-# Add ANTHROPIC_API_KEY to .env
+# Add ANTHROPIC_API_KEY to .env (optional for streaming lab)
+alembic upgrade head
 uvicorn app.main:app --reload --port 8000
 ```
 
@@ -32,7 +33,50 @@ npm run dev
 
 Open [http://localhost:5173](http://localhost:5173).
 
-## API
+## User feedback CRUD API (Day 7)
+
+Full REST CRUD for user feedback with Pydantic schemas, SQLAlchemy ORM, Alembic migrations, and auto-generated OpenAPI.
+
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| `POST` | `/api/feedback` | Create feedback |
+| `GET` | `/api/feedback` | List feedback (`?skip=&limit=&status=`) |
+| `GET` | `/api/feedback/{id}` | Get one record |
+| `PUT` | `/api/feedback/{id}` | Update feedback |
+| `DELETE` | `/api/feedback/{id}` | Delete feedback |
+
+- **OpenAPI UI:** http://127.0.0.1:8000/docs
+- **OpenAPI JSON:** http://127.0.0.1:8000/openapi.json
+
+### Example requests
+
+```bash
+# Create
+curl -X POST http://127.0.0.1:8000/api/feedback \
+  -H "Content-Type: application/json" \
+  -d '{"user_email":"user@example.com","subject":"Login issue","message":"Cannot reset password","rating":2}'
+
+# List
+curl http://127.0.0.1:8000/api/feedback
+
+# Update
+curl -X PUT http://127.0.0.1:8000/api/feedback/1 \
+  -H "Content-Type: application/json" \
+  -d '{"status":"in_review"}'
+
+# Delete
+curl -X DELETE http://127.0.0.1:8000/api/feedback/1
+```
+
+### Migrations
+
+```bash
+cd backend
+alembic upgrade head    # apply
+alembic downgrade -1    # rollback one revision
+```
+
+## Streaming API
 
 `POST /api/chat/stream`
 

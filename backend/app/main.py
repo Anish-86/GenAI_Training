@@ -3,10 +3,19 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import StreamingResponse
 
 from app.config import get_settings
+from app.exceptions import unhandled_exception_handler
 from app.models import ChatStreamRequest, HealthResponse, SimulateMode
+from app.routers.feedback import router as feedback_router
 from app.stream_service import stream_chat_completion
 
-app = FastAPI(title="GenAI Streaming Lab", version="1.0.0")
+app = FastAPI(
+    title="GenAI Lab API",
+    version="1.1.0",
+    description=(
+        "FastAPI backend with streaming AI chat and a full CRUD user-feedback REST API. "
+        "OpenAPI documentation is available at `/docs` and `/redoc`."
+    ),
+)
 
 app.add_middleware(
     CORSMiddleware,
@@ -19,14 +28,17 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+app.add_exception_handler(Exception, unhandled_exception_handler)
+app.include_router(feedback_router)
 
-@app.get("/health", response_model=HealthResponse)
+
+@app.get("/health", response_model=HealthResponse, tags=["health"])
 async def health() -> HealthResponse:
     settings = get_settings()
     return HealthResponse(status="ok", model=settings["model"] or "claude-3-5-haiku-latest")
 
 
-@app.post("/api/chat/stream")
+@app.post("/api/chat/stream", tags=["streaming"])
 async def chat_stream(request: ChatStreamRequest) -> StreamingResponse:
     async def event_generator():
         async for event in stream_chat_completion(
@@ -46,7 +58,7 @@ async def chat_stream(request: ChatStreamRequest) -> StreamingResponse:
     )
 
 
-@app.get("/api/chat/stream")
+@app.get("/api/chat/stream", tags=["streaming"])
 async def chat_stream_get(
     prompt: str,
     simulate: SimulateMode = SimulateMode.NONE,
